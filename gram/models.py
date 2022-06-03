@@ -51,4 +51,8 @@ class Image (models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     posted_time = models.DateTimeField(auto_now=True) 
     user=models.ForeignKey(User)
+
+    def save_image(self):
+        self.save() 
+
     
