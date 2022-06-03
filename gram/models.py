@@ -58,4 +58,22 @@ class Image (models.Model):
     def delete_image(self):
         self.delete()
 
+    @classmethod
+    def update_caption(cls,caption):
+        update_img = cls.objects.filter(id = id).update(caption = caption)
+        return images
+        pass  
+
+    @classmethod
+    def get_all_images(cls):
+        images = Image.objects.all()
+        return images 
+
+    @classmethod
+    def get_image_by_id(cls, id):
+        image = cls.objects.filter(id=id).all()
+        return image       
+        
+
+
     
