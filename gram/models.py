@@ -39,3 +39,7 @@ class Profile(models.Model):
         profile = Profile.objects.filter(user__username__icontains=name)
         return profile 
 
+    @classmethod 
+    def get_by_id(cls,id):
+        profile = Profile.objects.get(user = id)
+        return profile
