@@ -94,6 +94,23 @@ class Comments(models.Model):
        image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name='comments')
        user = models.ForeignKey(User, on_delete=models.CASCADE,null="True")
 
+       def __str__(self):
+               return self.comment
+
+       class Meta:
+               ordering = ['posted_date']
+
+       def save_comment(self):
+               self.save()
+
+       def del_comentm(self):
+               self.delete()
+
+       @classmethod
+       def get_comments_by_image_id(cls, image):
+               comments = Comments.objects.get(image_id=image)
+               return comments
+
         
 
 
