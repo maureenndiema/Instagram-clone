@@ -43,3 +43,12 @@ class Profile(models.Model):
     def get_by_id(cls,id):
         profile = Profile.objects.get(user = id)
         return profile
+
+class Image (models.Model):
+    image_name = models.CharField(max_length =50)
+    image = models.ImageField(upload_to = 'images/', default='No image')
+    image_caption = models.TextField()
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    posted_time = models.DateTimeField(auto_now=True) 
+    user=models.ForeignKey(User)
+    
