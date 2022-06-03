@@ -83,6 +83,17 @@ class Image (models.Model):
     def display_images(cls):
         images=cls.objects.all()
         return images     
+
+
+class Comments(models.Model):
+       """
+       Class that contains comments details
+       """
+       comment = HTMLField()
+       posted_date = models.DateTimeField(auto_now=True)
+       image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name='comments')
+       user = models.ForeignKey(User, on_delete=models.CASCADE,null="True")
+
         
 
 
