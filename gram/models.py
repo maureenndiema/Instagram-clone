@@ -72,7 +72,17 @@ class Image (models.Model):
     @classmethod
     def get_image_by_id(cls, id):
         image = cls.objects.filter(id=id).all()
-        return image       
+        return image   
+
+    @classmethod
+    def get_profile_pic(cls,profile):
+        images = Image.objects.filter(profile__pk = profile)
+        return images
+        pass
+      
+    def display_images(cls):
+        images=cls.objects.all()
+        return images     
         
 
 
