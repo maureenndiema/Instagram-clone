@@ -30,3 +30,12 @@ class Profile(models.Model):
     def delete_profile(self):
         self.delete()  
 
+    @classmethod
+    def update_profile(cls,update):
+        pass
+
+    classmethod
+    def search_by_profile(cls,name):
+        profile = Profile.objects.filter(user__username__icontains=name)
+        return profile 
+
