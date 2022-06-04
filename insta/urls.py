@@ -21,8 +21,8 @@ from django.contrib.auth import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('gram.urls')),  
-    # path('accounts/', include('registration.backends.simple.urls')),
-    # path('logout/$', views.logout, {"next_page": '/'}),
+    path('accounts/', include('registration.backends.simple.urls')),
+    path('logout/$', views.logout, {"next_page": '/'}),
     path('friendship/', include('friendship.urls')),
     path('tinymce/', include('tinymce.urls')),
 ]

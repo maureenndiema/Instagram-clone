@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect,get_object_or_404
 from django.http  import HttpResponse
 from django.contrib.auth import login, authenticate
 from .models import Image,Profile,Comments
@@ -98,4 +98,74 @@ def search_user(request):
        people = Follow.objects.following(request.user)
        print(profiles)
        return render(request, 'all-insta/search.html', {"message":message, "usernames":searched_profiles, "profiles":profiles,})  
+
+   else:
+       message = "You haven't searched for any term"
+       return render(request, 'all-insta/search.html', {"message":message})
+
+@login_required(login_url='/accounts/login/')
+def upload_image(request):
+        profile = Profile.objects.all()
+        form = ImageForm()
+        for profile in profile:
+            if profile.user.id == request.user.id:
+                if request.method == 'POST':
+                    form = ImageForm(request.POST, request.FILES)
+                    if form.is_valid():
+                        upload =form.save(commit=False)
+                        upload.profile = request.user
+                        upload.profile_det = profile
+                        upload.save()
+                        return redirect('profile', username=request.user)
+        else:
+         form = ImageForm()
+
+        return render(request, 'upload.html',{'form':form}) 
+
+def image(request,image_id):
+    try:
+        image = Image.objects.get(id = image_id)
+    except DoesNotExist:
+        raise Http404()
+    return render(request,"all-insta/image.html", {"image":image})
+
+def profile(request, user_id):
+    """
+    Function that enables one to see their profile
+    """
+    title = "Profile"
+
+    images = Image.get_image_by_id(id= user_id).order_by('-posted_time')
+    profiles = User.objects.get(id=user_id)
+    user = User.objects.get(id=user_id)
+    follow = len(Follow.objects.followers(user))
+    following = len(Follow.objects.following(user))
+    people = Follow.objects.following(request.user)
+    return render(request, 'all-insta/profile.html',{'title':title, "images":images,"follow":follow, "following":following,"profiles":profiles,"people":people})
+
+
+def new_profile(request):
+    current_user = request.user
+    profile=Profile.objects.get(user=request.user)
+    image= Profile.objects.get(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES,instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+
+    else:
+        form = ProfileForm()
+    return render(request, "all-insta/edit_profile.html", {"form":form,"image":image}) 
+
+def add_comment(request, image_id):
+   images = get_object_or_404(Image, pk=image_id)
+   if request.method == 'POST':
+       form = CommentsForm(request.POST)
+       if form.is_valid():
+           comment = form.save(commit=False)
+           comment.user = request.user
+           comment.image = images
+           comment.save()
+   return redirect('instagram')
 
