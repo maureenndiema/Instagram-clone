@@ -12,6 +12,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from friendship.models import Friend, Follow, Block
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
@@ -54,3 +55,32 @@ def activate(request, uidb64, token):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+@login_required(login_url='/accounts/login/')
+def instagram(request):
+    images = Image.objects.all()
+    print(images)
+    profiles = Profile.objects.all()
+    people = Follow.objects.following(request.user)
+    comments = Comments.objects.all()
+    profileimage=  User.objects.all()
+    
+    return render(request,'instagram.html',{"images":images, "profiles":profiles , "people":people,"comments":comments,"profileimage":profileimage})
+
+@login_required(login_url='/accounts/login/')
+def new_image(request):
+    current_user = request.user
+    if request.method == 'POST':
+        form = NewImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.save(commit=False)
+            image.profile = current_user.profile
+            image.user = current_user
+
+            image.save()
+        return redirect('instagram')
+
+    else:
+        form = NewImageForm()
+    return render(request, 'new_image.html', {"form": form})
+
