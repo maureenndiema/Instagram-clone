@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http  import HttpResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login,authenticate
 from .models import Image,Profile,Comments
 import datetime as dt
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import SignupForm,NewImageForm,ProfileForm,CommentsForm
+from forms import SignupForm,NewImageForm,ProfileForm,CommentsForm
 from django.core.mail import EmailMessage
 from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
