@@ -73,7 +73,18 @@ class ImageTestClass(TestCase):
     # Set up Method
     def setUp(self):
         self.image = Image(image = 'fashion')
+    
     def test_instance(self):
         self.assertTrue(isinstance(self.image, Image))
+
+    def tearDown(self):
+        self.image.delete_image()
+        self.profile.delete_profile()
+
+    def test_save_method(self):
+        self.image.save_image()
+        images  = Image.objects.all()
+        self.assertTrue(len(images)>0)
+
         
 
