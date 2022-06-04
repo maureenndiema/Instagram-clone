@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Image,Profile
+from .models import Image,Profile,Comments
 
 # Create your tests here.
 class ProfileTestClass(TestCase):
@@ -9,7 +9,7 @@ class ProfileTestClass(TestCase):
     """
     def setUp(self):
 
-        self.user = User.objects.create(id =1,username='hannah')
+        self.user = User.objects.create(id =1,username='maureen')
         self.profile = Profile(dp='', bio='', contact=" ",user=self.user)
 
     def test_instance(self):
@@ -45,5 +45,15 @@ class ProfileTestClass(TestCase):
         this_pro= self.profile.get_by_id(self.profile.user_id)
         profile = Profile.objects.get(user_id=self.profile.user_id)
         self.assertTrue(this_pro, profile)
+
+
+class CommentTestClass(TestCase):
+    #set up method
+    def setUp(self):
+        self.comments = Comments(description = 'comment')
+
+     #testing instance
+    def test_instance(self):
+        self.assertTrue(isinstance(self.comments,Comments))
         
 
