@@ -18,3 +18,14 @@ class NewImageForm(forms.ModelForm):
         widgets = {
             'likes': forms.CheckboxSelectMultiple(),
     }
+
+class ProfileForm(forms.ModelForm):
+
+    class Meta:
+        model =Profile
+        exclude=['user']
+
+class CommentsForm(forms.ModelForm):
+   class Meta:
+       model = Comments
+       fields = [ 'comment' ]         
