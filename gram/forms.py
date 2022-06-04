@@ -6,3 +6,15 @@ from django.views.generic.edit import FormMixin
 
 
 class SignupForm(UserCreationForm):
+    email = forms.EmailField(max_length=200, help_text='Required')
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
+
+class NewImageForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        exclude = ['image_name', 'pub_date','profile','user']
+        widgets = {
+            'likes': forms.CheckboxSelectMultiple(),
+    }
