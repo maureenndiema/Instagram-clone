@@ -35,5 +35,15 @@ class ProfileTestClass(TestCase):
         """
         self.profile.save_profile()
         new_profile = Profile.objects.filter(bio='').update(bio='')
+
+    
+    def test_get_profile_by_id(self):
+        """
+        Function to test if you can get a profile by its id
+        """
+        self.profile.save_profile()
+        this_pro= self.profile.get_by_id(self.profile.user_id)
+        profile = Profile.objects.get(user_id=self.profile.user_id)
+        self.assertTrue(this_pro, profile)
         
 
