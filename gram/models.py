@@ -50,7 +50,7 @@ class Image (models.Model):
     image_caption = models.TextField()
     profile = models.ForeignKey(User,on_delete=models.CASCADE)
     posted_time = models.DateTimeField(auto_now=True) 
-    user=models.ForeignKey(User)
+    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
 
     def save_image(self):
         self.save() 

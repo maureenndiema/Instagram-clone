@@ -19,10 +19,10 @@ from django.urls import path,include
 from django.contrib.auth import views
 
 urlpatterns = [
-    path(r'^admin/', admin.site.urls),
-    path(r'^',include('gram.urls')),  
-    # path(r'^accounts/', include('registration.backends.simple.urls')),
-    # path(r'^logout/$', views.logout, {"next_page": '/'}),
-    path(r'^friendship/', include('friendship.urls')),
-    path(r'^tinymce/', include('tinymce.urls')),
+    path('admin/', admin.site.urls),
+    path('',include('gram.urls')),  
+    # path('accounts/', include('registration.backends.simple.urls')),
+    # path('logout/$', views.logout, {"next_page": '/'}),
+    path('friendship/', include('friendship.urls')),
+    path('tinymce/', include('tinymce.urls')),
 ]
