@@ -28,5 +28,12 @@ class ProfileTestClass(TestCase):
         Function to test that a profile can be deleted
         """
         self.profile.save_profile()
+
+    def test_update_method(self):
+        """
+        Function to test that a profile's details can be updated
+        """
+        self.profile.save_profile()
+        new_profile = Profile.objects.filter(bio='').update(bio='')
         
 
