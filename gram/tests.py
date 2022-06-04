@@ -92,5 +92,19 @@ class ImageTestClass(TestCase):
         image = Image.objects.all()
         self.assertTrue(len(image) > 0)
 
+    def test_update_metod(self):
+        self.image.save_image()
+        self.image.update_caption()
+        image = Image.objects.all()
+        self.assertTrue(len(image) > 0)  
+
+    def test_get_all_images(self):
+        images = Image.get_all_images()
+        self.assertTrue(len(images)>0)
+
+    def test_get_image_by_id(self):
+        images= Image.get_image_by_id(self.image.id)
+        self.assertTrue(len(images) == 1)
+
         
 
