@@ -103,7 +103,7 @@ class Comments(models.Model):
        def save_comment(self):
                self.save()
 
-       def del_comentm(self):
+       def del_comment(self):
                self.delete()
 
        @classmethod
