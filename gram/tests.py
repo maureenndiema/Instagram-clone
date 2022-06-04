@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Image,Profile,Comments
+from .models import Image,Profile,Comments,User
 
 # Create your tests here.
 class ProfileTestClass(TestCase):

@@ -61,7 +61,7 @@ class Image (models.Model):
     @classmethod
     def update_caption(cls,caption):
         update_img = cls.objects.filter(id = id).update(caption = caption)
-        return images
+        return update_img
         pass  
 
     @classmethod
