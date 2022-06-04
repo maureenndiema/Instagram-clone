@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "friendship",
     'tinymce',
-    'insta',
+    'gram',
     'bootstrap5',
 ]
 
