@@ -68,5 +68,12 @@ class CommentTestClass(TestCase):
         self.comments.delete_comment()
         comments = Comments.objects.all()
         self.assertTrue(len(comments) == 1 )
+
+class ImageTestClass(TestCase):
+    # Set up Method
+    def setUp(self):
+        self.image = Image(image = 'fashion')
+    def test_instance(self):
+        self.assertTrue(isinstance(self.image, Image))
         
 
