@@ -1,19 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+        integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 </head>
+
 <body>
     <nav class="navbar">
-      <section class="logo-section"><img class="logo" src="https://seeklogo.com/images/I/instagram-new-2016-glyph-logo-84CB825424-seeklogo.com.png"/>
-        <div></div><img class="logoname" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/2000px-Instagram_logo.svg.png"/>
-      </section>
-      <form class="col-sm-4 col-md-4 col-xs-4 col-lg-4 navbar-form" role="search" action="{% url 'search_profile' %}" method="GET">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="&#xF002;  Search" name="username" style="font-family:FontAwesome;text-align:center;">
-        </div>
-      </form>
-  
+        <section class="logo-section"><img class="logo"
+                src="https://seeklogo.com/images/I/instagram-new-2016-glyph-logo-84CB825424-seeklogo.com.png" />
+            <div></div><img class="logoname"
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/2000px-Instagram_logo.svg.png" />
+        </section>
+        <form class="col-sm-4 col-md-4 col-xs-4 col-lg-4 navbar-form" role="search" action="{% url 'search_profile' %}"
+            method="GET">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="&#xF002;  Search" name="username"
+                    style="font-family:FontAwesome;text-align:center;">
+            </div>
+        </form>
+        <a href="/newprofile/" style="color:purple;"><button>Edit Profile</button></a>
+        <a href="/profile/{{user.id}}" style="color:purple;"><button>Profile</button></a>
+        <span class="icons-section"><a class="fa fa-compass" href="/profile/{{user.id}}"></a><a class="fa fa-heart"
+                href="#"></a>
+            {% if user.is_authenticated %}
+
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle fa fa-user " id="icon" data-toggle="dropdown" role="button"
+                    aria-expanded="false">
+                    <span class="caret"></span>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="">Home</a>
+                        </li>
+                        <li>
+                            <a href="{%url 'new-image'%}">Add Image</a>
+                        </li>
+                        <li>
+                            <a href="/accounts/password/change">Change Password</a>
+                        </li>
+                        <li>
+                            <a href="/logout">Logout</a>
+                        </li>
+                    </ul>
+            </li>
+
+            {% else %}
+            <li>
+                <a class='btn btn-default' href="/accounts/login">Login</a>
+            </li>
+            {% endif %}
+            </a>
+        </span>
+    </nav>
+</body>
+
+</html>
+<style>

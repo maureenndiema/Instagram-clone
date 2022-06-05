@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http  import HttpResponse
+from django.http  import Http404, HttpResponse
 from django.contrib.auth import login,authenticate
 from .models import Image,Profile,Comments
 import datetime as dt
@@ -13,6 +13,8 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from friendship.models import Friend, Follow, Block
+from django.core.exceptions import ObjectDoesNotExist
+
 
 # Create your views here.
 @login_required(login_url='/accounts/login/')
@@ -106,11 +108,11 @@ def search_user(request):
 @login_required(login_url='/accounts/login/')
 def upload_image(request):
         profile = Profile.objects.all()
-        form = ImageForm()
+        form = NewImageForm()
         for profile in profile:
             if profile.user.id == request.user.id:
                 if request.method == 'POST':
-                    form = ImageForm(request.POST, request.FILES)
+                    form = NewImageForm(request.POST, request.FILES)
                     if form.is_valid():
                         upload =form.save(commit=False)
                         upload.profile = request.user
@@ -118,14 +120,14 @@ def upload_image(request):
                         upload.save()
                         return redirect('profile', username=request.user)
         else:
-         form = ImageForm()
+         form = NewImageForm()
 
         return render(request, 'upload.html',{'form':form}) 
 
 def image(request,image_id):
     try:
         image = Image.objects.get(id = image_id)
-    except DoesNotExist:
+    except ObjectDoesNotExist:
         raise Http404()
     return render(request,"all-insta/image.html", {"image":image})
 
