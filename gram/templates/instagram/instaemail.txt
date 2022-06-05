@@ -1,4 +1,4 @@
 Hello {{name}}
 
-Welcome to instagram clone. Have fun!!
+Welcome to instagram. Have fun!!
 If this is not you please contact us immediately
