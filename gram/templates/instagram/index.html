@@ -65,5 +65,43 @@
             {%endfor%}
         </div>
     </div>
+    <div class="col-md-4 profilesIndex">
+        <div class="sticky-top">
+            <div class="row">
+                <div class="col-xs-3 mt-3">
+                    {% if user.profile.profile_pic %}
+                    <img src="{{user.profile.profile_pic.url}}" style="width:40px;height:40px;" alt="none" class="rounded-circle border ml-3 mt-2  mr-3">
+                    {%endif%}
+                </div>
+                <div class="col-xs-3 mt-4">
+                    <a href="{%url 'user_profile' user.username %}">
+                        <p class="account-heading" style="color:black;font-weight: bold;">{{ user.username }}
+                            <br> <span class="text-secondary" style="font-size:10px"> {{user.profile.name}}</span>
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <p class="text-muted">Suggestions for you :</p>
+            <hr> {%for profile in profiles%}
+
+            <div class="row">
+                <div class="col-xs-3 mt-3">
+                    {% if profile.user.profile.profile_pic %}
+                    <img src="{{profile.user.profile.profile_pic.url}}" style="width:40px;height:40px;" alt="none" class="rounded-circle border ml-3 mt-2  mr-3">{%endif%}
+                </div>
+                <div class="col-xs-3 mt-4">
+                    <a href="{%url 'user_profile' profile.user.username %}">
+                        <p class="account-heading" style="color:black;font-weight: bold;">{{ profile.user.username }}
+                        </p>
+                    </a>
+                </div>
+            </div>
+            {% endfor%}
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+</div>
+
+{%endblock %}
 
 
