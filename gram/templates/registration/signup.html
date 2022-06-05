@@ -10,5 +10,40 @@
                 <div class="card-title mt-4">
                     <h1 class="text-center"><img src="/static/images/instagramClearbg.png" style="height:50px"></h1>
                     <p class="text-center text-muted">Sign up to see photos and<br> videos from your friends.</p>
+                </div>
+                <div class="card-body mb-3 mr-3 ml-3 signupForm">
+                    <form action="{% url 'signup' %}" method="post" novalidate>
+                        {% csrf_token%} {{ form}}
+                        <button type="submit" class="btn btn-primary btn-sm"> Sign up</button>
+                    </form>
+                    <p class="text-center text-muted">By signing up, you agree to our <strong>Terms</strong> , <strong>Data Policy</strong>and <strong>Policy </strong> .</p>
 
                 </div>
+            </div>
+            <div class="card mt-2">
+                <div class="card-body mt-3 mb-2">
+                    <p class="text-center">Have an account? <a href="{% url 'login' %}">Log in</a></p>
+                </div>
+            </div>
+            <div container>
+                <p class="text-center mt-4">Get the app</p>
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5 mb-2">
+                        <a href="https://itunes.apple.com/app/instagram/id389801252?pt=428156&amp;ct=igweb.loginPage.badge&amp;mt=8&amp;vt=lo" target="_blank"><img src="{% static 'images/applestore.png' %}" alt="" width="100%" class="download"> </a>
+                    </div>
+                    <div class="col-md-5 mb-2">
+                        <a target="_blank" href="https://play.google.com/store/apps/details?id=com.instagram.android&amp;referrer=utm_source%3Dinstagramweb%26utm_campaign%3DloginPage%26ig_mid%3D35C7E049-B836-42B2-90B0-86793E160B70%26utm_content%3Dlo%26utm_medium%3Dbadge">
+                            <img src="{% static 'images/playstore.png' %}" alt="" width="100%" class="download">
+                        </a>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4"></div>
+    </div>
+</div>
+
+{% endblock %}
