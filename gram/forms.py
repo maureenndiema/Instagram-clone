@@ -1,31 +1,38 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Image,Profile,Comments
-from django.views.generic.edit import FormMixin
+from .models import Post,Profile,Comment 
 
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(max_length=254)
+    fullname=forms.CharField(max_length=254)
 
-class SignupForm(UserCreationForm):
-    email = forms.EmailField(max_length=200, help_text='Required')
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
-
-class NewImageForm(forms.ModelForm):
+        fields = ('username', 'fullname', 'email', 'password1','password2')
+       
+class UploadImageForm(forms.ModelForm):
     class Meta:
-        model = Image
-        exclude = ['image_name', 'pub_date','profile','user']
-        widgets = {
-            'likes': forms.CheckboxSelectMultiple(),
-    }
+        model = Post
+        fields = ('image', 'title', 'description') 
 
-class ProfileForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['post','user']
 
     class Meta:
-        model =Profile
-        exclude=['user']
+        model = Comment
+        fields = ('comment',)
 
-class CommentsForm(forms.ModelForm):
-   class Meta:
-       model = Comments
-       fields = [ 'comment' ]         
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')  
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('name',  'bio', 'profile_pic')

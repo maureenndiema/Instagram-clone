@@ -1,19 +1,18 @@
 from django.db import models
-import datetime as dt
 from django.contrib.auth.models import User
-from tinymce.models import HTMLField
-from django.dispatch import receiver
+from django.db.models.deletion import CASCADE
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 class Profile(models.Model):
-    username = models.CharField(max_length =30)
-    bio = models.TextField()
-    dp = models.ImageField( blank=True)
-    user = models.OneToOneField(User,related_name='profile', on_delete=models.CASCADE, primary_key=True)
+    user=models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
+    name=models.CharField(max_length=50)
+    bio=models.TextField(max_length=500,blank=True)
+    profile_pic=models.ImageField(upload_to='pictures/',default='default.png')
 
     def __str__(self):
-        return self.user.username
+        return f'{self.user.username} Profile'
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
@@ -21,97 +20,83 @@ class Profile(models.Model):
             Profile.objects.create(user=instance)
 
     @receiver(post_save, sender=User)
-    def save_user_profile(sender,instance, **kwargs):
+    def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
     def save_profile(self):
-        self.save()  
+        self.user
 
     def delete_profile(self):
-        self.delete()  
-
-    @classmethod
-    def update_profile(cls,update):
-        pass
-
-    classmethod
-    def search_by_profile(cls,name):
-        profile = Profile.objects.filter(user__username__icontains=name)
-        return profile 
-
-    @classmethod 
-    def get_by_id(cls,id):
-        profile = Profile.objects.get(user = id)
-        return profile
-
-class Image (models.Model):
-    image_name = models.CharField(max_length =50)
-    image = models.ImageField(upload_to = 'images/', default='No image')
-    image_caption = models.TextField()
-    profile = models.ForeignKey(User,on_delete=models.CASCADE)
-    posted_time = models.DateTimeField(auto_now=True) 
-    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True)
-
-    def save_image(self):
-        self.save() 
-
-    def delete_image(self):
         self.delete()
 
     @classmethod
-    def update_caption(cls,caption):
-        update_img = cls.objects.filter(id = id).update(caption = caption)
-        return update_img
-        pass  
-
-    @classmethod
-    def get_all_images(cls):
-        images = Image.objects.all()
-        return images 
-
-    @classmethod
-    def get_image_by_id(cls, id):
-        image = cls.objects.filter(id=id).all()
-        return image   
-
-    @classmethod
-    def get_profile_pic(cls,profile):
-        images = Image.objects.filter(profile__pk = profile)
-        return images
-        pass
-      
-    def display_images(cls):
-        images=cls.objects.all()
-        return images     
+    def search_profile(cls, search_term):
+        return cls.objects.filter(user__username__icontains=search_term).all()
+    def __str__(self):
+        return f'{self.user.username} Profile'
 
 
-class Comments(models.Model):
-       """
-       Class that contains comments details
-       """
-       comment = HTMLField()
-       posted_date = models.DateTimeField(auto_now=True)
-       image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name='comments')
-       user = models.ForeignKey(User, on_delete=models.CASCADE,null="True")
+class Post(models.Model):
+    image = models.ImageField(upload_to='posts/')
+    title = models.CharField(max_length=50)
+    description = models.CharField(max_length=250, blank=True)
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
 
-       def __str__(self):
-               return self.comment
+    class Meta:
+        '''
+        Class method to display images by date published
+        '''
+        ordering = ["-pk"]
 
-       class Meta:
-               ordering = ['posted_date']
+    def save_post(self):
+        '''
+        Method to save our images
+        '''
+        self.save()
 
-       def save_comment(self):
-               self.save()
-
-       def del_comment(self):
-               self.delete()
-
-       @classmethod
-       def get_comments_by_image_id(cls, image):
-               comments = Comments.objects.get(image_id=image)
-               return comments
-
-        
-
+    def delete_post(self):
+        '''
+        Method to delete our images
+        '''
+        self.delete()
 
     
+    def num_liked(self):
+        return self.likes.count()
+
+    
+
+    def __str__(self):
+        return self.title
+
+
+class Comment(models.Model):
+    comment = models.TextField()
+    post=models.ForeignKey(Post,related_name='comments',on_delete=models.CASCADE)
+    user=models.ForeignKey(Profile,related_name='comments',on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save_comment(self):
+        self.save()
+
+    def delete_comment(self):
+        self.delete()
+
+    @classmethod
+    def get_comments(cls,id):
+        comments = cls.objects.filter(post__id=id)
+        return comments
+
+    def __str__(self):
+        return self.comment
+    class Meta:
+        ordering=["-pk"]
+
+class Follow(models.Model):
+    follower=models.ForeignKey(Profile,related_name='followers',on_delete=models.CASCADE)
+    followed=models.ForeignKey(Profile,related_name='followed',on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.follower

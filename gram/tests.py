@@ -1,110 +1,41 @@
 from django.test import TestCase
-from .models import Image,Profile,Comments,User
-
+from .models import Profile,Post,Comment
+from django.contrib.auth.models import User
 # Create your tests here.
+
 class ProfileTestClass(TestCase):
-
-    """
-    Test profile class and its functions
-    """
     def setUp(self):
-
-        self.user = User.objects.create(id =1,username='maureen')
-        self.profile = Profile(dp='', bio='', contact=" ",user=self.user)
+        self.user=User(username='maureen')
+        self.user.save()
+        self.profile=Profile(user=self.user,name='maureen',bio='',profile_pic='')
+    def tearDown(self):
+        Profile.objects.all().delete()
+        User.objects.all().delete()
 
     def test_instance(self):
         self.assertTrue(isinstance(self.profile, Profile))
 
-    def test_save_method(self):
-        """
-        Function to test that profile is being saved
-        """
+    def test_saveProfile(self):
         self.profile.save_profile()
-        profiles = Profile.objects.all()
-        self.assertTrue(len(profiles) > 0)
-
-    def test_delete_method(self):
-        """
-        Function to test that a profile can be deleted
-        """
-        self.profile.save_profile()
-
-    def test_update_method(self):
-        """
-        Function to test that a profile's details can be updated
-        """
-        self.profile.save_profile()
-        new_profile = Profile.objects.filter(bio='').update(bio='')
-
-    
-    def test_get_profile_by_id(self):
-        """
-        Function to test if you can get a profile by its id
-        """
-        self.profile.save_profile()
-        this_pro= self.profile.get_by_id(self.profile.user_id)
-        profile = Profile.objects.get(user_id=self.profile.user_id)
-        self.assertTrue(this_pro, profile)
-
-
-class CommentTestClass(TestCase):
-    #set up method
+        profile_saved = Profile.objects.all()
+        self.assertTrue(len(profile_saved) > 0)
+class PostTestClass(TestCase):
     def setUp(self):
-        self.comments = Comments(description = 'comment')
-
-     #testing instance
-    def test_instance(self):
-        self.assertTrue(isinstance(self.comments,Comments))
-
-    #testing for saving method
-    def test_save_method(self):
-        self.comments.save_comment()
-        comments = Comments.objects.all()
-        self.assertTrue(len(comments) > 0)
-
-    #testing for deleting method
-    def test_delete_method(self):
-        self.comments.save_comment()
-        self.comments.delete_comment()
-        comments = Comments.objects.all()
-        self.assertTrue(len(comments) == 1 )
-
-class ImageTestClass(TestCase):
-    # Set up Method
-    def setUp(self):
-        self.image = Image(image = 'fashion')
-    
-    def test_instance(self):
-        self.assertTrue(isinstance(self.image, Image))
-
+        self.user=User(username='maureen')
+        self.user.save()
+        self.profile=Profile(user=self.user,name='maureen',bio='',profile_pic='')
+        self.post=Post(id=1,image='',title='food',description='islife',user=self.profile)
     def tearDown(self):
-        self.image.delete_image()
-        self.profile.delete_profile()
 
-    def test_save_method(self):
-        self.image.save_image()
-        images  = Image.objects.all()
-        self.assertTrue(len(images)>0)
-
-    def test_delete_method(self):
-        self.image.save_image()
-        self.image.delete_image()
-        image = Image.objects.all()
-        self.assertTrue(len(image) > 0)
-
-    def test_update_metod(self):
-        self.image.save_image()
-        self.image.update_caption()
-        image = Image.objects.all()
-        self.assertTrue(len(image) > 0)  
-
-    def test_get_all_images(self):
-        images = Image.get_all_images()
-        self.assertTrue(len(images)>0)
-
-    def test_get_image_by_id(self):
-        images= Image.get_image_by_id(self.image.id)
-        self.assertTrue(len(images) == 1)
-
-        
-
+        Post.objects.all().delete()
+        Profile.objects.all().delete()
+        User.objects.all().delete()
+    def test_insatance(self):
+        self.assertTrue(isinstance(self.post, Post))
+    def test_save_post(self):
+        saved_post=Post.objects.all().delete()
+        self.assertTrue((len(saved_post))>0)
+    def test_delete_post(self):
+        self.post.delete_post()
+        deleted_post = Post.objects.all()
+        self.assertTrue(len(deleted_post)==0)  

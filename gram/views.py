@@ -1,173 +1,188 @@
+from django.http.response import Http404
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http  import Http404, HttpResponse
-from django.contrib.auth import login,authenticate
-from .models import Image,Profile,Comments
-import datetime as dt
-from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from forms import SignupForm,NewImageForm,ProfileForm,CommentsForm
-from django.core.mail import EmailMessage
-from .tokens import account_activation_token
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from friendship.models import Friend, Follow, Block
-from django.core.exceptions import ObjectDoesNotExist
-
+from django.urls.base import reverse
+from .forms import *
+from .models import Post, Comment, Profile, Follow
+from django.http import HttpResponseRedirect
+from django.contrib.auth import logout
+from .email import send_welcome_email
 
 # Create your views here.
-@login_required(login_url='/accounts/login/')
-def signup(request):
+def signup_view(request):
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
-            message = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                'token':account_activation_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                        mail_subject, message, to=[to_email]
-            )
-            email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
-    else:
-        form = SignupForm()
-    return render(request, 'registration/registration_form.html', {'form': form})
 
-def activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-    else:
-        return HttpResponse('Activation link is invalid!')
-
-@login_required(login_url='/accounts/login/')
-def instagram(request):
-    images = Image.objects.all()
-    print(images)
-    profiles = Profile.objects.all()
-    people = Follow.objects.following(request.user)
-    comments = Comments.objects.all()
-    profileimage=  User.objects.all()
-    
-    return render(request,'instagram.html',{"images":images, "profiles":profiles , "people":people,"comments":comments,"profileimage":profileimage})
-
-@login_required(login_url='/accounts/login/')
-def new_image(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = NewImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            image = form.save(commit=False)
-            image.profile = current_user.profile
-            image.user = current_user
-
-            image.save()
-        return redirect('instagram')
-
-    else:
-        form = NewImageForm()
-    return render(request, 'new_image.html', {"form": form})
-
-  
-@login_required(login_url='/accounts/login/')
-def search_user(request):
-   """
-   Function that searches for profiles based on the usernames
-   """
-   if 'username' in request.GET and request.GET["username"]:
-       name = request.GET.get("username")
-       searched_profiles = User.objects.filter(username__icontains=name)
-       message = f"{name}"
-       profiles = User.objects.all()
-       people = Follow.objects.following(request.user)
-       print(profiles)
-       return render(request, 'all-insta/search.html', {"message":message, "usernames":searched_profiles, "profiles":profiles,})  
-
-   else:
-       message = "You haven't searched for any term"
-       return render(request, 'all-insta/search.html', {"message":message})
-
-@login_required(login_url='/accounts/login/')
-def upload_image(request):
-        profile = Profile.objects.all()
-        form = NewImageForm()
-        for profile in profile:
-            if profile.user.id == request.user.id:
-                if request.method == 'POST':
-                    form = NewImageForm(request.POST, request.FILES)
-                    if form.is_valid():
-                        upload =form.save(commit=False)
-                        upload.profile = request.user
-                        upload.profile_det = profile
-                        upload.save()
-                        return redirect('profile', username=request.user)
-        else:
-         form = NewImageForm()
-
-        return render(request, 'upload.html',{'form':form}) 
-
-def image(request,image_id):
-    try:
-        image = Image.objects.get(id = image_id)
-    except ObjectDoesNotExist:
-        raise Http404()
-    return render(request,"all-insta/image.html", {"image":image})
-
-def profile(request, user_id):
-    """
-    Function that enables one to see their profile
-    """
-    title = "Profile"
-
-    images = Image.get_image_by_id(id= user_id).order_by('-posted_time')
-    profiles = User.objects.get(id=user_id)
-    user = User.objects.get(id=user_id)
-    follow = len(Follow.objects.followers(user))
-    following = len(Follow.objects.following(user))
-    people = Follow.objects.following(request.user)
-    return render(request, 'all-insta/profile.html',{'title':title, "images":images,"follow":follow, "following":following,"profiles":profiles,"people":people})
-
-
-def new_profile(request):
-    current_user = request.user
-    profile=Profile.objects.get(user=request.user)
-    image= Profile.objects.get(user=request.user)
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES,instance=request.user.profile)
-        if form.is_valid():
             form.save()
-        return redirect('/')
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+
+            name=form.cleaned_data['fullname']
+            email=form.cleaned_data['email']
+            
+            send_welcome_email(name,email)
+
+            user = authenticate(username=username, password=password)
+
+            login(request, user)
+
+
+            return redirect('welcome')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})
+
+@login_required(login_url='/accounts/login/')
+def welcome(request):
+    posts=Post.objects.all()
+    users = User.objects.exclude(id=request.user.id)
+    profiles=Profile.objects.all()[:5]
+    if request.method=='POST':
+        form=UploadImageForm(request.POST,request.FILES)
+        if form.is_valid():
+            post=form.save(commit=False)
+            post.user=request.user.profile
+            post.save()
+
+
+            return HttpResponseRedirect(request.path_info)
 
     else:
-        form = ProfileForm()
-    return render(request, "all-insta/edit_profile.html", {"form":form,"image":image}) 
+        form=UploadImageForm()
+    return render(request, 'instagram/index.html',{'posts':posts,'form':form,'users':users,'profiles':profiles})
 
-def add_comment(request, image_id):
-   images = get_object_or_404(Image, pk=image_id)
-   if request.method == 'POST':
-       form = CommentsForm(request.POST)
-       if form.is_valid():
-           comment = form.save(commit=False)
-           comment.user = request.user
-           comment.image = images
-           comment.save()
-   return redirect('instagram')
+def logout_view(request):
+    logout(request,"welcome.html")
 
+@login_required(login_url='/accounts/login/')
+def comment(request,post_id):
+        current_user=request.user.profile
+        post = Post.objects.get(id=post_id)
+        user_profile = User.objects.get(username=current_user.user)
+        comments = Comment.objects.all()
+        if request.method == 'POST':
+                form = CommentForm(request.POST, request.FILES)
+                if form.is_valid():
+                        comment = form.save(commit=False)
+                        comment.post = post
+                        comment.user = request.user.profile
+                        comment.save()  
+                return HttpResponseRedirect(request.path_info)
+        else:
+                form = CommentForm()
+        params = {
+        'post': post,
+        'form': form,
+        'comments': comments,
+    }
+        return render(request, 'instagram/comment.html',params)
+def like_post(request,post_id):
+    post = Post.objects.get(pk=post_id)
+    is_liked=False
+    user=request.user.profile
+    try:
+        profile=Profile.objects.get(user=user.user)
+        print(profile)
+
+    except Profile.DoesNotExist:
+        raise Http404()
+    if post.likes.filter(id=user.user.id).exists():
+        post.likes.remove(user.user)
+        is_liked=False
+    else:
+        post.likes.add(user.user)
+        is_liked=True
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def search_results(request):
+    posts=Post.objects.all()
+
+    if 'search_profile' in request.GET and request.GET["search_profile"]:
+        search_term = request.GET.get("search_profile")
+        searched_profiles = Profile.search_profile(search_term)
+        print(searched_profiles)
+        message = f"{search_term}"
+        return render(request, 'instagram/search_results.html', {"message":message,"profiles": searched_profiles})
+    else:
+        message = "You haven't searched for any profile"
+    return render(request, 'instagram/search_results.html', {'message': message,'posts':posts})
+
+@login_required()
+def profile(request, username):
+    current_user=request.user.profile
+ 
+    profile=Profile.objects.get(user=current_user.user)
+    posts = request.user.profile.posts.all()
+
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
+            user.profile=profile
+            user.profile = request.user.profile
+            user.save()
+
+            prof = profile_form.save(commit=False)
+            prof.profile=profile
+            prof.profile = request.user.profile
+            prof.save() 
+
+
+            return HttpResponseRedirect(request.path_info)
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = UserProfileForm(instance=request.user.profile)
+    params = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'posts': posts,
+
+    }
+    return render(request, 'instagram/profile.html', params)
+    
+@login_required()
+def update_profile(request, username):
+    current_user=request.user.profile
+
+    user_profile = get_object_or_404(User, username=username)
+    if request.user == user_profile:
+        return redirect('profile', username=request.user.username)
+
+    profile1=Profile.objects.get(user=current_user.user)
+   
+    user_posts = user_profile.profile.posts.all()
+    
+    followers = Follow.objects.filter(followed=user_profile.profile)
+    follow_status = None
+    for follower in followers:
+        if request.user.profile == follower.follower:
+            follow_status = True
+        else:
+            follow_status = False
+    params = {
+        'user_profile': user_profile,
+        'user_posts': user_posts,
+        'followers': followers,
+        'follow_status': follow_status,
+        'profile1':profile1,
+    }
+    return render(request, 'instagram/updated_profile.html', params)
+
+def follow(request,follow):
+    if request.method == 'GET':
+        user_follow=Profile.objects.get(pk=follow)
+        follow_user=Follow(follower=request.user.profile, followed=user_follow)
+        follow_user.save()
+        return redirect('user_profile',user_follow.user.username)
+def unfollow(request,unfollow):
+    if request.method=='GET':
+        user_unfollow=Profile.objects.get(pk=unfollow)
+        unfollow_user=Follow.objects.filter(follower=request.user.profile,followed=user_unfollow)
+        unfollow_user.delete()
+        return redirect('user_profile',user_unfollow.user.username)
+    
