@@ -12,3 +12,80 @@
                         <img class="rounded-circle account-img" src="{{user.profile.profile_pic.url}}"> 
                         {%endif%}
                     </div>
+                    <div class="col-md-6 mt-3">
+                        <div class="media-body">
+                            <div class="account-heading"><span class="mr-3  username"><strong>{{ user.username}}</strong></span>
+                                <a class="btn btn-sm editProfile  mr-3" data-toggle="modal" data-target=".bd-example-modal-md"><span style="color:black;"><strong>Edit Profile</strong></span></a>
+                                <a class="mt-3" data-toggle="modal" data-target="#ModalCenter"><i class="fa fa-cog mt-3"
+                                        id="cog"></i></a>
+                            </div>
+                            <div class="post-details mt-3 mb-3">
+                                <span class="mr-5"><strong>{{posts.count}}</strong> Posts</span>
+                                <span class="mr-5"> <strong>{{ user.profile.followers.count }}</strong> following</span>
+                                <span class="mr-5"> <strong>{{ user.profile.followed.count }}</strong> followers</span>
+                            </div>
+                            <h5><strong>{{ user.profile.name }}</strong></h5>
+                            <p><i class="fa fa-quote-left"></i> {{user.profile.bio}} <i class="fa fa-quote-right"></i></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-sm  " id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true">&times;</span>
+                         </button>
+                    </div>
+                    <div class="modal-body">
+                        <a class="D-block mx-auto" href="">Change Password</a>
+                        <hr>
+                        <a class="D-block mx-auto" href="/logout">Logout</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal fade bd-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md ">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center "> Upload profile</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body updateForm">
+                        <form action="{% url 'profile' user.username %}" method="post" novalidate enctype="multipart/form-data" class="mr-4 mt-4 ml-4 mb-4">
+                            {% csrf_token%} {{ user_form}} {{ profile_form}}
+                            <button type="submit" class="btn btn-primary btn-sm"> Update Profile</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mt-4">
+    <div class="card-columns cardprofileImages">
+        {% for image in posts %}
+        <a href="{% url 'comment' post_id=image.id %}">
+            <div class="card" style="width:22rem;">
+                <div class="card-body">
+                    <div class="profileImages">
+                        <img src="{{image.image.url}}" alt="{{image.caption}}" class="card-img">
+                        <p id="overlay" class="text">
+                            <i class="fas fa-heart" style="font-size: 18"></i>
+                            <span>{{image.likes.count}} like{{image.likes.count|pluralize}}</span>
+                            <i class="fas fa-comment ml-4"></i> <span>{{image.comments.count}} comment{{image.comments.count|pluralize}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
