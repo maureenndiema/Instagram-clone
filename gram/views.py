@@ -1,3 +1,5 @@
+from time import process_time_ns
+from django.conf import UserSettingsHolder
 from django.http.response import Http404
 from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
@@ -23,7 +25,7 @@ def signup_view(request):
             name=form.cleaned_data['fullname']
             email=form.cleaned_data['email']
             
-            send_welcome_email(name,email)
+            send_welcome_email(name, email)
 
             user = authenticate(username=username, password=password)
 
@@ -35,7 +37,32 @@ def signup_view(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
-@login_required(login_url='/accounts/login/')
+
+def login(request):
+     form = LoginForm(request.POST)
+     if form.is_valid():
+
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+
+            name=form.cleaned_data['fullname']
+            email=form.cleaned_data['email']
+            
+            send_welcome_email(name,email)
+
+            user = authenticate(username=username, password=password)
+
+            login(request, user)
+
+            return redirect('welcome')
+        
+     else:
+        form = LoginForm()
+        return render(request, 'registration/login.html', {'form': form})
+  
+
+@login_required(login_url='login')
 def welcome(request):
     posts=Post.objects.all()
     users = User.objects.exclude(id=request.user.id)
@@ -57,7 +84,8 @@ def welcome(request):
 def logout_view(request):
     logout(request,"welcome.html")
 
-@login_required(login_url='/accounts/login/')
+
+@login_required(login_url='login')
 def comment(request,post_id):
         current_user=request.user.profile
         post = Post.objects.get(id=post_id)

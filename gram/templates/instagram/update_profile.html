@@ -1,0 +1,62 @@
+{% extends 'instagram/base.html' %} 
+<!-- {% load crispy_forms_tags %}  -->
+{% block content %}
+<div class="container" style="margin-top:8%">
+    <div class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class=col-md-2></div>
+                <div class=col-md-8>
+                    <div class="media">
+                        {% if user_profile.profile.profile_pic %}
+                        <img class="rounded-circle account-img mr-5" src="{{ user_profile.profile.profile_pic.url }}"> 
+                        {%endif%}
+                        <div class="media-body">
+                            <h5 class="mt-0 "><strong>{{ user_profile.username }}</strong> 
+                                {% if follow_status %}
+                                <a class="btn btn-sm btn-outline-danger ml-5" href="{% url 'unfollow' user_profile.profile.id %}">Unfollow</a> 
+                                {%else%}
+                                <a class="btn btn-sm btn-primary ml-5" href="{% url 'follow' user_profile.profile.id %}">Follow</a> 
+                                {% endif %}
+                            </h5>
+                            <div class="post-details">
+                                <span class="mr-5"><strong>{{user_posts.count}}</strong> Posts</span>
+                                <span class="mr-5"> <strong>{{ user_profile.profile.followers.count }}</strong>
+                                        followers</span>
+                                <span class="mr-5"> <strong>{{ user_profile.profile.followed.count }}</strong>
+                                        following</span>
+                            </div>
+                            <br style="clear: both">
+                            <div>
+                                <h5><strong>{{ user_profile.profile.name }}</strong></h5>
+                                <p><i class="fa fa-quote-left"></i> {{user_profile.profile.bio}} <i class="fa fa-quote-right"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class=col-md-2></div>
+        </div>
+    </div>
+    <hr class="mt-2">
+    <div class="card-columns cardprofileImages">
+        {% for image in user_posts %}
+        <a href="{% url 'comment' post_id=image.id %}">
+            <div class="card imgHover" style="width:22rem;">
+                <div class="card-body">
+                    <div class="profileImages ">
+                        <img src="{{image.image.url}} " alt="{{image.caption}} " class="card-img">
+                        <div id="overlay" class="text">
+                            <i class="fas fa-heart " style="font-size: 18 "></i>
+                            <span>{{image.likes.count}} like{{image.likes.count|pluralize}} </span>
+                            <i class="fas fa-comment ml-4 "></i> <span>{{image.comments.count}} comment{{image.comments.count|pluralize}}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

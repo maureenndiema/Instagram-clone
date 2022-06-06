@@ -1,0 +1,12 @@
+.icons {
+    font-size: 22px !important;
+}
+
+.icons i {
+    margin-left: 22px !important;
+}
+
+i.far.fa-user-circle,
+i.fa.fa-home {
+    color: black !important;
+}

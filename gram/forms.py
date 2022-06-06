@@ -36,3 +36,14 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('name',  'bio', 'profile_pic')
+
+class LoginForm(forms.ModelForm):
+    username = forms.EmailField(max_length=254)
+    password = forms.EmailField(max_length=254)
+    
+    
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
+       

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'tinymce',
     'gram',
     'bootstrap5',
+    
 ]
 
 MIDDLEWARE = [

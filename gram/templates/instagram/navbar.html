@@ -1,4 +1,41 @@
-<!DOCTYPE html>
+{%load static%}
+<div class="navbar fixed-top bg-white">
+    <nav class="container">
+        <span class="navbar-brand mb-0 h1">
+            <a href="/">
+                <div id="brand"><img src="{% static 'images/instaLogo.png' %}"></div>
+            </a>
+        </span>
+        <form class="mb-0 ml-auto mr-auto" id="searchform" action="{% url 'search_results' %}" role="search">
+
+            <div class="input-group">
+                <input class="form-control py-2 border-right-0  border text-center" type="search" placeholder="search" id="searching" name="search_profile">
+                <span class="input-group-append">
+                    <button class="input-group-text bg-transparent border-left-0 sm" type="submit"><i class="fa fa-search "></i></button>
+                </span>
+            </div>
+        </form>
+
+        <span class="pull-right icons">
+            <a href="/"><i class="fa fa-home"></i></a>
+            <i class="far fa-compass" aria-hidden="true"></i>
+            <i class="fa fa-heart-o" aria-hidden="true"></i>
+            <a href="{%url 'profile' user.username %}"><i class="far fa-user-circle"></i></a> 
+        </span>
+    </nav>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
 
@@ -51,4 +88,4 @@
             </nav>
             </body>
             </html>
-            <style>
+            <style> -->
