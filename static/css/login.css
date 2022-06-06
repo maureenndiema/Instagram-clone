@@ -1,0 +1,65 @@
+.slideLogin {
+    background-image: url(../images/instaLogin.png);
+    background-size: 454px 618px;
+    margin-right: -15px;
+    margin-left: -35px;
+    flex-basis: 454px;
+    height: 618px;
+}
+
+#screenshots {
+    margin: 99px 0 0 135px;
+    position: relative;
+}
+
+#screenshots>div {
+    position: absolute;
+}
+
+form {
+    width: 80%;
+    padding: 20px;
+    padding-top: 0 !important;
+    border-radius: 6px;
+    float: center;
+    align-items: center;
+    font-size: 16px;
+    font-style: bold;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.loginForm input {
+    height: 15px;
+    margin-bottom: 1%;
+}
+
+.signupForm input {
+    height: 15px;
+    margin-bottom: 1%;
+}
+
+label {
+    margin-top: 1%;
+}
+
+ul.errorlist {
+    color: red;
+}
+
+.card-title {
+    margin-bottom: 1% !important;
+}
+
+.card-body {
+    padding: 2% !important;
+}
+
+.btn {
+    padding: 2% !important;
+}
+
+button {
+    width: 100%;
+    background-color: rgb(16, 182, 248, 0.6) !important;
+}

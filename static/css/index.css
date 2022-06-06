@@ -1,0 +1,61 @@
+body {
+    scroll-behavior: smooth;
+    background-color: whitesmoke;
+}
+
+.index {
+    margin-top: 80px !important;
+}
+
+.helptext {
+    display: none;
+}
+
+.errorlist {
+    margin: 0;
+    padding: 0;
+}
+
+.errorlist ul li {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+}
+
+.uploadForm form {
+    width: 80%;
+    padding: 20px;
+    padding-top: 0 !important;
+    border-radius: 6px;
+    float: center;
+    align-items: center;
+    font-size: 16px;
+    font-style: bold;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.uploadButton {
+    background-color: transparent;
+    border: 1px solid lightseagreen;
+    height: 30px !important;
+    color: black !important;
+    padding: 1% !important;
+    place-content: center;
+    width: 110px;
+}
+
+.likeCommentButton button {
+    background: none !important;
+    color: black;
+    padding: 0;
+}
+
+i.fa.fa-heart {
+    color: black;
+}
+
+i.fa.fa-comment {
+    color: black;
+}
