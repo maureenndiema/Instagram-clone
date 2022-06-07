@@ -61,6 +61,5 @@ python3 manage.py test
 
 
 ## License
-
-   MIT License Copyright @ 2022 Maureen Ndiema
+MIT License Copyright @ 2022 Maureen Ndiema
 
