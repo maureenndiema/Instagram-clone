@@ -30,7 +30,7 @@ class PostTestClass(TestCase):
         Post.objects.all().delete()
         Profile.objects.all().delete()
         User.objects.all().delete()
-    def test_insatance(self):
+    def test_instance(self):
         self.assertTrue(isinstance(self.post, Post))
     def test_save_post(self):
         saved_post=Post.objects.all().delete()

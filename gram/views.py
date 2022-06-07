@@ -11,6 +11,7 @@ from .models import Post, Comment, Profile, Follow
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
 from .email import send_welcome_email
+from django.contrib.auth import login as auth_login
 
 # Create your views here.
 def signup_view(request):
@@ -25,7 +26,7 @@ def signup_view(request):
             name=form.cleaned_data['fullname']
             email=form.cleaned_data['email']
             
-            send_welcome_email(name, email)
+            
 
             user = authenticate(username=username, password=password)
 

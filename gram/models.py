@@ -3,13 +3,14 @@ from django.contrib.auth.models import User
 from django.db.models.deletion import CASCADE
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class Profile(models.Model):
     user=models.OneToOneField(User, on_delete=models.CASCADE,related_name='profile')
     name=models.CharField(max_length=50)
     bio=models.TextField(max_length=500,blank=True)
-    profile_pic=models.ImageField(upload_to='pictures/',default='default.png')
+    profile_pic=CloudinaryField('image')
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -37,7 +38,7 @@ class Profile(models.Model):
 
 
 class Post(models.Model):
-    image = models.ImageField(upload_to='posts/')
+    image = CloudinaryField('image')
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=250, blank=True)
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
